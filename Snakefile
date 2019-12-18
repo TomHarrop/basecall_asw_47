@@ -132,6 +132,7 @@ rule basecall:
         '--qscore_filtering true '
         '--recursive '
         '--device auto '
+        '--num_callers 4 '
         '&> {log}'
 
 rule untar:
