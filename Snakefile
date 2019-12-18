@@ -114,7 +114,8 @@ rule basecall:
     output:
         Path(outdir, 'basecalled', '{fc}', 'sequencing_summary.txt')
     params:
-        outdir = Path(outdir, 'basecalled', '{fc}')
+        outdir = lambda wildcards:
+            Path(outdir, 'basecalled', wildcard.fc)
     log:
         Path(logdir, 'basecall.{fc}.log')
     resources:
