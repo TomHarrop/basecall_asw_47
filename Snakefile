@@ -62,7 +62,7 @@ minionqc_container = 'shub://TomHarrop/singularity-containers:minionqc_1.4.1'
 #         minionqc_container
 #     log:
 #         'basecall_guppy2.3.7/logs/minionqc.log'
-#     shell:
+#     shell:Path(outdir, 'basecalled', '{fc}', 'sequencing_summary.txt')
 #         'MinIONQC.R '
 #         '--processors={threads} '
 #         '--input={params.search_dir} '
@@ -139,7 +139,7 @@ rule untar:
     output:
         temp(directory(Path(tempdir, '{fc}'))
     log:
-        Path(logdir, 'untar.{fc}.log'
+        Path(logdir, 'untar.{fc}.log')
     singularity:
         pigz_container
     shell:
