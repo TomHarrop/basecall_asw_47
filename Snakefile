@@ -21,18 +21,19 @@ tempdir = Path(outdir, 'temp')
 logdir = Path(outdir, 'logs')
 
 fc_list = [
-    '20181102_0046_ASW47-t7-3',
-    '20181102_2243_ASW47-t7-3',
-    '20181104_2357_ASW47-t7-124',
-    '20181107_0140_ASW47-B1',
-    '20181108_0252_ASW47-B2',
-    '20181109_0257_ASW47-C1',
-    '20181112_0016_ASW47-C2',
-    'sample_10',
-    'sample_3',
-    'sample_5',
-    'sample_7',
-    'sample_8']
+    '20181102_0046_ASW47-t7-3'
+    # '20181102_2243_ASW47-t7-3',
+    # '20181104_2357_ASW47-t7-124',
+    # '20181107_0140_ASW47-B1',
+    # '20181108_0252_ASW47-B2',
+    # '20181109_0257_ASW47-C1',
+    # '20181112_0016_ASW47-C2',
+    # 'sample_10',
+    # 'sample_3',
+    # 'sample_5',
+    # 'sample_7',
+    # 'sample_8'
+    ]
 
 pigz_container = 'shub://TomHarrop/singularity-containers:pigz_2.4.0'
 guppy_container = 'shub://TomHarrop/ont-containers:guppy_3.4.1'
