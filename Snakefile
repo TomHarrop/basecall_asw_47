@@ -137,7 +137,7 @@ rule untar:
     input:
         'data/{fc}.tar.gz'
     output:
-        temp(directory(Path(tempdir, '{fc}'))
+        temp(directory(Path(tempdir, '{fc}')))
     log:
         Path(logdir, 'untar.{fc}.log')
     singularity:
