@@ -35,7 +35,7 @@ fc_list = [
     'sample_8']
 
 pigz_container = 'shub://TomHarrop/singularity-containers:pigz_2.4.0'
-guppy_container = 'shub://TomHarrop/ont-containers.guppy_3.4.1'
+guppy_container = 'shub://TomHarrop/ont-containers:guppy_3.4.1'
 minionqc_container = 'shub://TomHarrop/singularity-containers:minionqc_1.4.1'
 
 
