@@ -133,6 +133,7 @@ rule basecall:
         '--recursive '
         '--device auto '
         '--num_callers 4 '
+        '--gpu_runners_per_device 16 '
         '&> {log}'
 
 rule untar:
