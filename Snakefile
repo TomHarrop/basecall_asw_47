@@ -70,8 +70,8 @@ rule minionqc:
         group_bc_output
     output:
         directory(Path(outdir, 'minionqc', '{group}'))
-    shadow:
-        'minimal'
+    # shadow:
+    #     'minimal'
     params:
         search_dir = '\'.\'',
     threads:
