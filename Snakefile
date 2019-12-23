@@ -61,10 +61,10 @@ rule target:
     input:
         expand(Path(outdir, 'merged', '{group}.fq.gz').as_posix(),
                group=['pool', 'asw47']),
-        # expand(Path(outdir,
-        #             'minionqc',
-        #             '{group}').as_posix(),
-        #        group=['pool', 'asw47'])
+        expand(Path(outdir,
+                    'minionqc',
+                    '{group}').as_posix(),
+               group=['pool', 'asw47'])
 
 rule minionqc:
     input:
