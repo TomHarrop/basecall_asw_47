@@ -120,8 +120,8 @@ rule combine:
         group_bc_output
     output:
         fq = temp(Path(tempdir, '{group}', 'all_pass.fastq'))
-    params:
-        files = lambda wildcards: find_basecalled_fastq_files(wildcards)
+    # params:
+    #     files = lambda wildcards: find_basecalled_fastq_files(wildcards)
     run:
         print(input)
         # with open(output.fq, 'wt') as f:
