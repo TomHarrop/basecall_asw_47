@@ -71,7 +71,7 @@ rule minionqc:
     input:
         group_bc_output
     output:
-        directory(Path(outdir, 'minionqc', '{group}')
+        directory(Path(outdir, 'minionqc', '{group}'))
     shadow:
         'minimal'
     params:
