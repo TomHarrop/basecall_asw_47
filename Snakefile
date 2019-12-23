@@ -24,7 +24,7 @@ def find_basecalled_fastq_files(wildcards):
             fq=glob_results.fq)
         for f in my_files:
             if Path(f).is_file():
-                all_files.append(x)
+                all_files.append(f)
     print(all_files)
     return all_files
 
