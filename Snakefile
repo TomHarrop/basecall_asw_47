@@ -92,11 +92,13 @@ rule manual_shadow:
         group_bc_output
     output:
         temp(directory(Path(tempdir, 'minionqc' '{group}')))
+    params:
+        parents = lambda wildcards, input: [Path(x).parent for x in input]
     singularity:
         minionqc_container
     shell:
-        'mkdir -p {output} ; '
-        'ln -s {input} {output}/ ; '
+        'mkdir {output} ; '
+        'ln -s {params.parents} {output}/ ; '
         'ls -lh {output}'
 
 rule compress:
