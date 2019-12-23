@@ -93,7 +93,8 @@ rule manual_shadow:
     output:
         temp(directory(Path(tempdir, 'minionqc' '{group}')))
     params:
-        parents = lambda wildcards, input: [Path(x).parent for x in input]
+        parents = lambda wildcards, input:
+            [Path(x).parent.resolve() for x in input]
     singularity:
         minionqc_container
     shell:
