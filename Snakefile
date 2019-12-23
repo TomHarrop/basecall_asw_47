@@ -73,7 +73,7 @@ rule minionqc:
     shadow:
         'minimal'
     params:
-        search_dir = '.',
+        search_dir = '\'.\'',
     threads:
         min(len(fc_list), multiprocessing.cpu_count())
     singularity:
