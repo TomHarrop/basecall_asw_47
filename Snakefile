@@ -62,9 +62,7 @@ rule target:
                group=['pool', 'asw47']),
         expand(Path(outdir,
                     'minionqc',
-                    '{group}',
-                    'combinedQC',
-                    'summary.yaml').as_posix(),
+                    '{group}').as_posix(),
                group=['pool', 'asw47'])
 
 rule minionqc:
