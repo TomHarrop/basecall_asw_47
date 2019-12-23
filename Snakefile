@@ -58,8 +58,8 @@ minionqc_container = 'shub://TomHarrop/singularity-containers:minionqc_1.4.1'
 
 rule target:
     input:
-        expand(Path(outdir, 'merged', '{group}.fq.gz').as_posix(),
-               group=['pool', 'asw47']),
+        # expand(Path(outdir, 'merged', '{group}.fq.gz').as_posix(),
+        #        group=['pool', 'asw47']),
         expand(Path(outdir,
                     'minionqc',
                     '{group}').as_posix(),
@@ -87,7 +87,7 @@ rule minionqc:
         '--processors={threads} '
         '--input={params.search_dir} '
         '--outputdirectory={output} '
-        '&> {log}'
+        # '&> {log}'
 
 
 rule compress:
