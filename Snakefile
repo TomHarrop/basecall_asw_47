@@ -81,6 +81,7 @@ rule minionqc:
     log:
         Path(logdir, 'minionqc.{group}.log')
     shell:
+        'sleep 100 ; '
         'ls -alh . ; '
         'pwd ; '
         'MinIONQC.R '
