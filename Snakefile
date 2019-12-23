@@ -119,7 +119,7 @@ rule combine:
     input:
         group_bc_output
     output:
-        fq = temp(Path(tempdir, '{group}', 'all_pass.fastq'))
+        fq = Path(tempdir, '{group}', 'all_pass.fastq')
     # params:
     #     files = lambda wildcards: find_basecalled_fastq_files(wildcards)
     run:
