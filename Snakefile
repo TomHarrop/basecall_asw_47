@@ -14,6 +14,7 @@ def group_bc_output(wildcards):
 
 
 def find_basecalled_fastq_files(wildcards):
+    print(wildcards)
     my_fc_list = pool_list if wildcards.group == 'pool' else asw47_list
     my_files = []
     for fc in my_fc_list:
