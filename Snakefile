@@ -13,7 +13,6 @@ def group_bc_output(wildcards):
 
 
 def find_basecalled_fastq_files(wildcards):
-    print(wildcards)
     my_fc_list = pool_list if wildcards.group == 'pool' else asw47_list
     all_files = []
     for fc in my_fc_list:
@@ -25,7 +24,6 @@ def find_basecalled_fastq_files(wildcards):
         for f in my_files:
             if Path(f).is_file():
                 all_files.append(f)
-    print(all_files)
     return all_files
 
 
@@ -123,12 +121,8 @@ rule combine:
         fq = Path(tempdir, '{group}', 'all_pass.fastq')
     params:
         files = lambda wildcards: find_basecalled_fastq_files(wildcards)
-    shell:
-        'echo {params.files}'
-        # with open(output.fq, 'wt') as f:
-        #     for line in fileinput.input(params.files):
-        #         f.write(line)
-
+    script:
+        'src/combine.py'
 
 rule basecall:
     input:
