@@ -20,7 +20,7 @@ def find_basecalled_fastq_files(wildcards):
         my_path = Path(outdir, 'basecalled', fc, 'pass', '{fq}.fastq')
         glob_results = glob_wildcards(my_path)
         all_files = expand(
-            my_path,
+            my_path.as_posix(),
             fq=glob_results.fq)
         my_files.append(x for x in all_files if Path(x).is_file())
     print(my_files)
