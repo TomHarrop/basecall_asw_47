@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import fileinput
 import multiprocessing
 from pathlib import Path
 
@@ -120,10 +119,10 @@ rule combine:
         group_bc_output
     output:
         fq = Path(tempdir, '{group}', 'all_pass.fastq')
-    # params:
-    #     files = lambda wildcards: find_basecalled_fastq_files(wildcards)
+    params:
+        files = lambda wildcards: find_basecalled_fastq_files(wildcards)
     shell:
-        'echo {input}'
+        'echo {params.files}'
         # with open(output.fq, 'wt') as f:
         #     for line in fileinput.input(params.files):
         #         f.write(line)
