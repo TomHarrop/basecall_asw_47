@@ -23,6 +23,7 @@ def find_basecalled_fastq_files(wildcards):
             my_path,
             fq=glob_results.fq)
         my_files.append(x for x in all_files if Path(x).is_file())
+    print(my_files)
     return my_files
 
 
@@ -60,10 +61,10 @@ rule target:
     input:
         expand(Path(outdir, 'merged', '{group}.fq.gz').as_posix(),
                group=['pool', 'asw47']),
-        expand(Path(outdir,
-                    'minionqc',
-                    '{group}').as_posix(),
-               group=['pool', 'asw47'])
+        # expand(Path(outdir,
+        #             'minionqc',
+        #             '{group}').as_posix(),
+        #        group=['pool', 'asw47'])
 
 rule minionqc:
     input:
@@ -119,7 +120,7 @@ rule combine:
     output:
         fq = temp(Path(tempdir, '{group}', 'all_pass.fastq'))
     params:
-        files = lambda wildcards: find_basecalled_fastq_files()
+        files = lambda wildcards: find_basecalled_fastq_files(wildcards)
     run:
         with open(output.fq, 'wt') as f:
             for line in fileinput.input(params.files):
