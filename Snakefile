@@ -56,43 +56,38 @@ pigz_container = 'shub://TomHarrop/singularity-containers:pigz_2.4.0'
 guppy_container = 'shub://TomHarrop/ont-containers:guppy_3.4.1'
 minionqc_container = 'shub://TomHarrop/singularity-containers:minionqc_1.4.1'
 
-
-# rule target:
-#     input:
-#         'basecall_guppy2.3.7/minionqc/combinedQC/summary.yaml',
-#         'basecall_guppy2.3.7/merged/all_pass.fastq.gz'
-
-
-# rule minionqc:
-#     input:
-#         expand('basecall_guppy2.3.7/basecalled/{fc}/sequencing_summary.txt',
-#                fc=fc_list)
-#     output:
-#         'basecall_guppy2.3.7/minionqc/combinedQC/summary.yaml'
-#     params:
-#         search_dir = 'basecall_guppy2.3.7/basecalled',
-#         outdir = 'basecall_guppy2.3.7/minionqc'
-#     threads:
-#         min(len(fc_list), multiprocessing.cpu_count())
-#     priority:
-#         1
-#     singularity:
-#         minionqc_container
-#     log:
-#         'basecall_guppy2.3.7/logs/minionqc.log'
-#     shell:Path(outdir, 'basecalled', '{fc}', 'sequencing_summary.txt')
-#         'MinIONQC.R '
-#         '--processors={threads} '
-#         '--input={params.search_dir} '
-#         '--outputdirectory={params.outdir} '
-#         '&> {log}'
-
-
 rule target:
     input:
         expand(Path(outdir, 'merged', '{group}.fq.gz').as_posix(),
+               group=['pool', 'asw47']),
+        expand(Path(outdir,
+                    'minionqc',
+                    '{group}',
+                    'combinedQC',
+                    'summary.yaml').as_posix(),
                group=['pool', 'asw47'])
 
+rule minionqc:
+    input:
+        group_bc_output
+    output:
+        directory(Path(outdir, 'minionqc', '{group}')
+    shadow:
+        'minimal'
+    params:
+        search_dir = '.',
+    threads:
+        min(len(fc_list), multiprocessing.cpu_count())
+    singularity:
+        minionqc_container
+    log:
+        Path(logdir, 'minionqc.{group}.log')
+    shell:
+        'MinIONQC.R '
+        '--processors={threads} '
+        '--input={params.search_dir} '
+        '--outputdirectory={output} '
+        '&> {log}'
 
 
 rule compress:
@@ -108,9 +103,6 @@ rule compress:
         'pigz --processes {threads} --best --keep {input} '
         '; '
         'mv {input}.gz {output}'
-
-
-
 
 
 rule combine:
