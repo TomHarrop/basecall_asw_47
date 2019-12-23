@@ -95,7 +95,7 @@ rule manual_shadow:
     singularity:
         minionqc_container
     shell:
-        'mkdir -p {output} '
+        'mkdir -p {output} ; '
         'ln -s {input} {output}/ ; '
         'ls -lh {output}'
 
