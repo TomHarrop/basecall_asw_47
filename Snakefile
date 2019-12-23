@@ -15,16 +15,18 @@ def group_bc_output(wildcards):
 def find_basecalled_fastq_files(wildcards):
     print(wildcards)
     my_fc_list = pool_list if wildcards.group == 'pool' else asw47_list
-    my_files = []
+    all_files = []
     for fc in my_fc_list:
         my_path = Path(outdir, 'basecalled', fc, 'pass', '{fq}.fastq')
         glob_results = glob_wildcards(my_path)
-        all_files = expand(
+        my_files = expand(
             my_path.as_posix(),
             fq=glob_results.fq)
-        my_files.append(x for x in all_files if Path(x).is_file())
-    print(my_files)
-    return my_files
+        for f in my_files:
+            if Path(f).is_file():
+                all_files.append(x)
+    print(all_files)
+    return all_files
 
 
 # GLOBALS
