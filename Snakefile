@@ -58,8 +58,8 @@ minionqc_container = 'shub://TomHarrop/singularity-containers:minionqc_1.4.1'
 
 rule target:
     input:
-        # expand(Path(outdir, 'merged', '{group}.fq.gz').as_posix(),
-        #        group=['pool', 'asw47']),
+        expand(Path(outdir, 'merged', '{group}.fq.gz').as_posix(),
+               group=['pool', 'asw47']),
         expand(Path(outdir,
                     'minionqc',
                     '{group}').as_posix(),
@@ -67,7 +67,7 @@ rule target:
 
 rule minionqc:
     input:
-        Path(tempdir, 'minionqc' '{group}')
+        Path(tempdir, 'minionqc', '{group}')
     output:
         directory(Path(outdir, 'minionqc', '{group}'))
     threads:
@@ -77,21 +77,18 @@ rule minionqc:
     log:
         Path(logdir, 'minionqc.{group}.log')
     shell:
-        'sleep 100 ; '
-        'ls -alh . ; '
-        'pwd ; '
         'MinIONQC.R '
         '--processors={threads} '
         '--input={input} '
         '--outputdirectory={output} '
-        # '&> {log}'
+        '&> {log}'
 
 
 rule manual_shadow:
     input:
         group_bc_output
     output:
-        temp(directory(Path(tempdir, 'minionqc' '{group}')))
+        temp(directory(Path(tempdir, 'minionqc', '{group}')))
     params:
         parents = lambda wildcards, input:
             [Path(x).parent.resolve() for x in input]
@@ -100,7 +97,6 @@ rule manual_shadow:
     shell:
         'mkdir {output} ; '
         'ln -s {params.parents} {output}/ ; '
-        'ls -lh {output}'
 
 rule compress:
     input:
