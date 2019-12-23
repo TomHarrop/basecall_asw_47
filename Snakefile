@@ -67,13 +67,9 @@ rule target:
 
 rule minionqc:
     input:
-        group_bc_output
+        Path(tempdir, 'minionqc' '{group}')
     output:
         directory(Path(outdir, 'minionqc', '{group}'))
-    # shadow:
-    #     'minimal'
-    params:
-        search_dir = '\'.\'',
     threads:
         min(len(fc_list), multiprocessing.cpu_count())
     singularity:
@@ -86,10 +82,21 @@ rule minionqc:
         'pwd ; '
         'MinIONQC.R '
         '--processors={threads} '
-        '--input={params.search_dir} '
+        '--input={input} '
         '--outputdirectory={output} '
         # '&> {log}'
 
+
+rule manual_shadow:
+    input:
+        group_bc_output
+    output:
+        temp(directory(Path(tempdir, 'minionqc' '{group}')))
+    singularity:
+        minionqc_container
+    shell:
+        'ln -s {input} {output}/ ; '
+        'ls -lh {output}'
 
 rule compress:
     input:
