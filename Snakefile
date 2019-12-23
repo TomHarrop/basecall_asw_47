@@ -122,8 +122,8 @@ rule combine:
         fq = Path(tempdir, '{group}', 'all_pass.fastq')
     # params:
     #     files = lambda wildcards: find_basecalled_fastq_files(wildcards)
-    run:
-        print(input)
+    shell:
+        'echo {input}'
         # with open(output.fq, 'wt') as f:
         #     for line in fileinput.input(params.files):
         #         f.write(line)
