@@ -4,6 +4,27 @@ import fileinput
 import multiprocessing
 from pathlib import Path
 
+def group_bc_output(wildcards):
+    my_fc_list = pool_list if wildcards.group == 'pool' else asw47_list
+    return expand(Path(outdir,
+                       'basecalled',
+                       '{fc}',
+                       'sequencing_summary.txt').as_posix(),
+                  fc=my_fc_list)
+
+
+def find_basecalled_fastq_files(wildcards):
+    my_fc_list = pool_list if wildcards.group == 'pool' else asw47_list
+    my_files = []
+    for fc in my_fc_list:
+        my_path = Path(outdir, 'basecalled', fc, 'pass', '{fq}.fastq')
+        glob_results = glob_wildcards(my_path)
+        all_files = expand(
+            my_path,
+            fq=glob_results.fq)
+        my_files.append(x for x in all_files if Path(x).is_file())
+    return my_files
+
 
 # GLOBALS
 outdir = 'basecall_guppy341'
@@ -67,52 +88,36 @@ minionqc_container = 'shub://TomHarrop/singularity-containers:minionqc_1.4.1'
 #         '&> {log}'
 
 
-# rule compress:
-#     input:
-#         'basecall_guppy2.3.7/merged/all_pass.fastq'
-#     output:
-#         'basecall_guppy2.3.7/merged/all_pass.fastq.gz'
-#     singularity:
-#         pigz_container
-#     threads:
-#         multiprocessing.cpu_count()
-#     shell:
-#         'pigz --processes {threads} --best --keep {input}'
-
-
 rule target:
     input:
-        expand(Path(tempdir, '{group}', 'all_pass.fastq').as_posix(),
+        expand(Path(outdir, 'merged', '{group}.fq.gz').as_posix(),
                group=['pool', 'asw47'])
 
 
-def group_bc_output(wildcards):
-    my_fc_list = pool_list if wildcards.group == 'pool' else asw47_list
-    return expand(Path(outdir,
-                       'basecalled',
-                       '{fc}',
-                       'sequencing_summary.txt').as_posix(),
-                  fc=my_fc_list)
+
+rule compress:
+    input:
+        Path(tempdir, '{group}', 'all_pass.fastq')
+    output:
+        Path(outdir, 'merged', '{group}.fq.gz')
+    singularity:
+        pigz_container
+    threads:
+        multiprocessing.cpu_count()
+    shell:
+        'pigz --processes {threads} --best --keep {input} '
+        '; '
+        'mv {input}.gz {output}'
 
 
-def find_basecalled_fastq_files(wildcards):
-    my_fc_list = pool_list if wildcards.group == 'pool' else asw47_list
-    my_files = []
-    for fc in my_fc_list:
-        my_path = Path(outdir, 'basecalled', fc, 'pass', '{fq}.fastq')
-        glob_results = glob_wildcards(my_path)
-        all_files = expand(
-            my_path,
-            fq=glob_results.fq)
-        my_files.append(x for x in all_files if Path(x).is_file())
-    return my_files
+
 
 
 rule combine:
     input:
         group_bc_output
     output:
-        fq = Path(tempdir, '{group}', 'all_pass.fastq')
+        fq = temp(Path(tempdir, '{group}', 'all_pass.fastq'))
     params:
         files = lambda wildcards: find_basecalled_fastq_files()
     run:
