@@ -4,16 +4,6 @@ import fileinput
 import multiprocessing
 from pathlib import Path
 
-# def find_basecalled_fastq_files(wildcards):
-#     glob_results = glob_wildcards(
-#         Path(outdir, 'basecalled', wildcards.fc, 'pass')
-#         'basecall_guppy2.3.7/basecalled/{fc}/pass/{fq}.fastq')
-#     all_files = snakemake.io.expand(
-#         'basecall_guppy2.3.7/basecalled/{fc}/pass/{fq}.fastq',
-#         zip,
-#         fc=glob_results.fc,
-#         fq=glob_results.fq)
-#     return [x for x in all_files if os.path.isfile(x)]
 
 # GLOBALS
 outdir = 'basecall_guppy341'
@@ -33,6 +23,13 @@ fc_list = [
     'sample_5',
     'sample_7',
     'sample_8']
+
+pool_list = [x for x in fc_list
+             if x.startswith('sample')]
+
+asw47_list = [x for x in fc_list
+              if x.startswith('201811')]
+
 
 pigz_container = 'shub://TomHarrop/singularity-containers:pigz_2.4.0'
 guppy_container = 'shub://TomHarrop/ont-containers:guppy_3.4.1'
@@ -83,30 +80,46 @@ minionqc_container = 'shub://TomHarrop/singularity-containers:minionqc_1.4.1'
 #         'pigz --processes {threads} --best --keep {input}'
 
 
-# rule combine:
-#     input:
-#         expand(Path(outdir,
-#                     'basecalled',
-#                     '{fc}',
-#                     'sequencing_summary.txt').as_posix(),
-#                fc=fc_list)
-#     output:
-#         fq = temp(Path(tempdir, 'merged', 'all_pass.fastq'))
-#     params:
-#         files = lambda wildcards: find_basecalled_fastq_files()
-#     run:
-#         with open(output.fq, 'wt') as f:
-#             for line in fileinput.input(params.files):
-#                 f.write(line)
-
-
 rule target:
     input:
-        expand(Path(outdir,
-                    'basecalled',
-                    '{fc}',
-                    'sequencing_summary.txt').as_posix(),
-               fc=fc_list)
+        expand(Path(tempdir, '{group}', 'all_pass.fastq').as_posix(),
+               group=['pool', 'asw47'])
+
+
+def group_bc_output(wildcards):
+    my_fc_list = pool_list if wildcards.group == 'pool' else asw47_list
+    return expand(Path(outdir,
+                       'basecalled',
+                       '{fc}',
+                       'sequencing_summary.txt').as_posix(),
+                  fc=my_fc_list)
+
+
+def find_basecalled_fastq_files(wildcards):
+    my_fc_list = pool_list if wildcards.group == 'pool' else asw47_list
+    my_files = []
+    for fc in my_fc_list:
+        my_path = Path(outdir, 'basecalled', fc, 'pass', '{fq}.fastq')
+        glob_results = glob_wildcards(my_path)
+        all_files = expand(
+            my_path,
+            fq=glob_results.fq)
+        my_files.append(x for x in all_files if Path(x).is_file())
+    return my_files
+
+
+rule combine:
+    input:
+        group_bc_output
+    output:
+        fq = Path(tempdir, '{group}', 'all_pass.fastq')
+    params:
+        files = lambda wildcards: find_basecalled_fastq_files()
+    run:
+        with open(output.fq, 'wt') as f:
+            for line in fileinput.input(params.files):
+                f.write(line)
+
 
 rule basecall:
     input:
