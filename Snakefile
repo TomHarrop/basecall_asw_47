@@ -82,6 +82,7 @@ rule minionqc:
         Path(logdir, 'minionqc.{group}.log')
     shell:
         'ls -alh . ; '
+        'pwd ; '
         'MinIONQC.R '
         '--processors={threads} '
         '--input={params.search_dir} '
